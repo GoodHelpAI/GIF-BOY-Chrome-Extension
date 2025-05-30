@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      width: 320px;
+      padding: 0;
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: #f5f5f7;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .header h1 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .content {
+      padding: 20px;
+    }
+    
+    .section {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 12px;
+    }
+    
+    .control-group {
+      margin-bottom: 16px;
+    }
+    
+    label {
+      display: block;
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 6px;
+    }
+    
+    select, input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      background: white;
+      box-sizing: border-box;
+    }
+    
+    select:focus, input[type="number"]:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    .quality-slider {
+      width: 100%;
+      margin: 10px 0;
+    }
+    
+    .quality-value {
+      text-align: center;
+      font-size: 14px;
+      color: #667eea;
+      font-weight: 600;
+    }
+    
+    .capture-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    
+    button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .primary-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .primary-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+    
+    .primary-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .secondary-btn {
+      background: white;
+      border: 2px solid #667eea;
+      color: #667eea;
+    }
+    
+    .secondary-btn:hover {
+      background: #f5f5ff;
+    }
+    
+    .status {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      text-align: center;
+      display: none;
+    }
+    
+    .status.recording {
+      background: #fff3cd;
+      color: #856404;
+      display: block;
+    }
+    
+    .status.success {
+      background: #d4edda;
+      color: #155724;
+      display: block;
+    }
+    
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+      display: block;
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: #e0e0e0;
+      border-radius: 2px;
+      margin-top: 10px;
+      overflow: hidden;
+      display: none;
+    }
+    
+    .progress-bar.active {
+      display: block;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Animation to GIF</h1>
+  </div>
+  
+  <div class="content">
+    <div class="section">
+      <div class="section-title">Capture Settings</div>
+      
+      <div class="control-group">
+        <label for="resolution">Resolution</label>
+        <select id="resolution">
+          <option value="0.5">Low (50%)</option>
+          <option value="0.75">Medium (75%)</option>
+          <option value="1" selected>High (100%)</option>
+          <option value="1.5">Ultra (150%)</option>
+        </select>
+      </div>
+      
+      <div class="control-group">
+        <label for="fps">Frame Rate</label>
+        <select id="fps">
+          <option value="10">10 FPS</option>
+          <option value="15">15 FPS</option>
+          <option value="24" selected>24 FPS</option>
+          <option value="30">30 FPS</option>
+          <option value="60">60 FPS</option>
+        </select>
+      </div>
+      
+      <div class="control-group">
+        <label for="duration">Duration (seconds)</label>
+        <input type="number" id="duration" min="1" max="30" value="5" step="0.5">
+      </div>
+      
+      <div class="control-group">
+        <label for="quality">Quality</label>
+        <input type="range" class="quality-slider" id="quality" min="1" max="20" value="10">
+        <div class="quality-value" id="qualityValue">Medium</div>
+      </div>
+    </div>
+    
+    <div class="capture-buttons">
+      <button id="captureBtn" class="primary-btn">Start Capture</button>
+      <button id="stopBtn" class="secondary-btn" style="display: none;">Stop</button>
+    </div>
+    
+    <div id="status" class="status"></div>
+    <div class="progress-bar" id="progressBar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>
